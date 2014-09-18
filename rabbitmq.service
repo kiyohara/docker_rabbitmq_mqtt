@@ -1,0 +1,13 @@
+[Unit]
+Description=RabbitMQ w/ MQTT
+After=docker.service
+Requires=docker.service
+#BindsTo=rabbitmq-discovery.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill rabbitmq-mqtt
+ExecStartPre=-/usr/bin/docker rm rabbitmq-mqtt
+ExecStartPre=/usr/bin/docker pull kiyohara/docker-rabbitmq-mqtt
+ExecStart=/usr/bin/docker run --name rabbitmq-mqtt --rm -p 5672:5672 -p 1883:1883 -p 4369:4369 -p 25672:25672 -p 15672:15672 kiyohara/docker-rabbitmq-mqtt
+ExecStop=/usr/bin/docker kill --signal="TERM" rabbitmq-mqtt
