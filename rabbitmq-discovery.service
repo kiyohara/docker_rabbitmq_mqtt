@@ -3,9 +3,16 @@ Description=Announce RabbitMQ
 BindsTo=rabbitmq.service
 
 [Service]
-# ExecStart=/bin/sh -c "while true; do etcdctl set /services/mqtt-broker '{ \"host\": \"%H\", \"port\": 1883}' --ttl 60;sleep 45;done"
-ExecStart=/bin/sh -c "while true; do etcdctl set /services/mqtt-broker '{ \"host\": \"%H\", \"port\": 1883}' --ttl 2;sleep 1;done"
-ExecStop=/usr/bin/etcdctl rm /services/rabbitmq
+# ToDo:
+# consider --ttl value (60?) & sleep value (45?)
+ExecStart=/bin/sh -c '\
+  IPADDR=$(hostname -i); \
+  SET_JSON="{ \\\"host\\\": \\\"%H\\\", \\\"ipaddr\\\": \\\"$IPADDR\\\", \\\"port\\\": \\\"1883\\\" }"; \
+  while true; do \
+    etcdctl set /services/mqtt-broker "$SET_JSON" --ttl 2; \
+    sleep 1; \
+  done'
+ExecStop=/usr/bin/etcdctl rm /services/mqtt-broker
 
 [X-Fleet]
 MachineOf=rabbitmq.service
