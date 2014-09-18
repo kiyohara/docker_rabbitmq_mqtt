@@ -15,6 +15,11 @@ RUN /usr/sbin/rabbitmq-plugins enable rabbitmq_mqtt
 RUN /usr/sbin/rabbitmq-plugins enable rabbitmq_management
 RUN echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config
 
+ADD run-container.sh /usr/sbin/run-container.sh
+RUN chmod +x /usr/sbin/run-container.sh
+RUN mkdir -p /var/run/rabbitmq
+RUN chown rabbitmq:rabbitmq /var/run/rabbitmq
+
 # main
 EXPOSE 5672
 
@@ -28,4 +33,6 @@ EXPOSE 25672
 # management plugin
 EXPOSE 15672
 
-CMD /usr/sbin/rabbitmq-server
+ENTRYPOINT ["/bin/bash", "-c"]
+
+CMD ["/usr/sbin/run-container.sh"]
