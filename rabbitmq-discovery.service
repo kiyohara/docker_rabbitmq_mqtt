@@ -1,15 +1,24 @@
 [Unit]
 Description=Announce RabbitMQ
-BindsTo=rabbitmq.service
+BindsTo=rabbitmq.service etcd.service
 
 [Service]
+# check cound-config(user-data)
+# units: public-addr-discovery.service
+#
 # ToDo:
 # consider --ttl value (60?) & sleep value (45?)
 ExecStart=/bin/sh -c '\
-  IPADDR=$(hostname -i | awk "{ print \$1 }"); \
-  SET_JSON="{ \\\"host\\\": \\\"%H\\\", \\\"ipaddr\\\": \\\"$IPADDR\\\", \\\"port\\\": \\\"1883\\\" }"; \
+  IPADDR=$(/usr/bin/etcdctl get /machines/%m/ipaddr); \
+  [ -z "$IPADDR" ] && echo "ipaddr lookup failure (via etcdctl)" && exit; \
+  SET_JSON="{ \
+    \\\"host\\\": \\\"%H\\\", \
+    \\\"machineid\\\": \\\"%m\\\", \
+    \\\"ipaddr\\\": \\\"$IPADDR\\\", \
+    \\\"port\\\": \\\"1883\\\" \
+  }"; \
   while true; do \
-    etcdctl set /services/mqtt-broker "$SET_JSON" --ttl 2; \
+    /usr/bin/etcdctl set /services/mqtt-broker "$SET_JSON" --ttl 2; \
     sleep 1; \
   done'
 ExecStop=/usr/bin/etcdctl rm /services/mqtt-broker
