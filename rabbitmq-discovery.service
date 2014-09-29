@@ -6,7 +6,7 @@ BindsTo=rabbitmq.service
 # ToDo:
 # consider --ttl value (60?) & sleep value (45?)
 ExecStart=/bin/sh -c '\
-  IPADDR=$(hostname -i); \
+  IPADDR=$(hostname -i | awk "{ print \$1 }"); \
   SET_JSON="{ \\\"host\\\": \\\"%H\\\", \\\"ipaddr\\\": \\\"$IPADDR\\\", \\\"port\\\": \\\"1883\\\" }"; \
   while true; do \
     etcdctl set /services/mqtt-broker "$SET_JSON" --ttl 2; \
