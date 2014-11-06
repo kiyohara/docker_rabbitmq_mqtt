@@ -1,4 +1,5 @@
-FROM kiyohara/docker-supervisor
+#FROM kiyohara/docker-supervisor
+FROM kiyohara/docker-sshd
 
 MAINTAINER Tomokazu Kiyohara "tomokazu.kiyohara@gmail.com"
 
