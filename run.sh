@@ -31,7 +31,7 @@ _main() {
     _p "-p 8022:22"
   fi
 
-  _p "rabbitmq_mqtt"
+  _p "rabbitmq-mqtt"
 
   _debug && _p "bash"
 

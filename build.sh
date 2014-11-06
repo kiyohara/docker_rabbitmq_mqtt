@@ -1,1 +1,1 @@
-docker build -t rabbitmq_mqtt .
+docker build -t rabbitmq-mqtt .
