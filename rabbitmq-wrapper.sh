@@ -2,9 +2,10 @@
 
 PID_FILE=/var/run/rabbitmq/pid
 trap_sigterm() {
-  #echo "trap sigterm: rabbtmqctl stop ${PID_FILE} ....."
+  printf "rabbitmq-wrapper: trap sigterm\n"
+  printf "rabbitmq-wrapper: rabbitmqctl stop: stopping ${PID_FILE} ... \n"
   /usr/sbin/rabbitmqctl stop $PID_FILE
-  #echo "..... done"
+  printf "rabbitmq-wrapper: rabbitmqctl stop: done \n"
   exit 0
 }
 

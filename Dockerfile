@@ -1,9 +1,8 @@
-FROM ubuntu:14.04
+FROM kiyohara/docker-supervisor
+
 MAINTAINER Tomokazu Kiyohara "tomokazu.kiyohara@gmail.com"
 
 ENV DEBIAN_FRONTEND noninteractive
-
-RUN apt-get update
 
 ADD http://www.rabbitmq.com/rabbitmq-signing-key-public.asc /tmp/rabbitmq-signing-key-public.asc
 RUN apt-key add /tmp/rabbitmq-signing-key-public.asc
@@ -15,8 +14,8 @@ RUN /usr/sbin/rabbitmq-plugins enable rabbitmq_mqtt
 RUN /usr/sbin/rabbitmq-plugins enable rabbitmq_management
 RUN echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config
 
-ADD run-container.sh /usr/sbin/run-container.sh
-RUN chmod +x /usr/sbin/run-container.sh
+ADD rabbitmq-wrapper.sh /usr/bin/rabbitmq-wrapper.sh
+RUN chmod +x /usr/bin/rabbitmq-wrapper.sh
 RUN mkdir -p /var/run/rabbitmq
 RUN chown rabbitmq:rabbitmq /var/run/rabbitmq
 
@@ -33,6 +32,6 @@ EXPOSE 25672
 # management plugin
 EXPOSE 15672
 
-ENTRYPOINT ["/bin/bash", "-c"]
 
-CMD ["/usr/sbin/run-container.sh"]
+## supervisord
+ADD etc/supervisor/conf.d/rabbitmq.conf /etc/supervisor/conf.d/rabbitmq.conf
